@@ -6,7 +6,7 @@ DESCRIPTION = 'python package for querying IPMI tool'
 LONG_DESCRIPTION = """Python package to query IPMITool to get power statistics"""
 
 setup (
-        name="ipmitool",
+        name="iriscastipmi",
         version=VERSION,
         author="Anish Mudaraddi",
         author_email="<anish.mudaraddi@stfc.ac.uk>",

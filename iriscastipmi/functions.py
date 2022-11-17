@@ -1,5 +1,5 @@
 import re
-from .utils import check_ipmi_conn, ipmi_query_power, to_csv
+from iriscastipmi.utils import check_ipmi_conn, ipmi_query_power, to_csv
 
 
 def get_current_power(csv=False):
