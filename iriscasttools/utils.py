@@ -39,5 +39,8 @@ def ipmi_query_power():
         return None
     return res
 
-def to_csv(power_stats):
-    return "%s\n%s" % (",".join(power_stats.keys()), ",".join(power_stats.values()))
+def to_csv(stats, include_header=True):
+    res = ",".join([str(s) for s in stats.values()])
+    if include_header:
+        return "%s\n%s" % (",".join(stats.keys()), res)
+    return res

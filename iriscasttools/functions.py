@@ -1,5 +1,34 @@
 import re
-from iriscastipmi.utils import check_ipmi_conn, ipmi_query_power, to_csv
+import os
+import psutil
+from iriscasttools.utils import check_ipmi_conn, ipmi_query_power, to_csv
+
+
+def get_iriscast_stats(poll_period_seconds=300, csv=False, include_header=False):
+    """ get stats for iriscast """
+    stats = {}
+
+    # get power info
+    power_stats = get_all_power_stats()
+    if power_stats:
+        power_stats['watt_hours'] = round(
+            int(power_stats['current_power']) * (poll_period_seconds/3600), 3
+        )
+        stats.update(power_stats)
+
+    # get cpu info
+    stats.update(get_cpu_usage())
+
+    # get os load info
+    stats.update(get_os_load())
+
+    # get ram info
+    stats.update(get_ram_usage())
+
+    if csv:
+        return to_csv(stats, include_header)
+
+    return stats
 
 
 def get_current_power(csv=False):
@@ -48,4 +77,39 @@ def get_all_power_stats(csv=False):
     return power_stats
 
 
+def get_cpu_usage(csv=False):
+    """ get os cpu usage from psutils """
+    stat = {
+        "cpu_usage_percentage": psutil.cpu_percent()
+    }
+
+    if csv:
+        return to_csv(stat)
+    return stat
+
+
+def get_os_load(csv=False):
+    """ get os load average from os """
+    loads = os.getloadavg()
+    stat = {
+        "os_load_1": loads[0],
+        "os_load_5": loads[1],
+        "os_load_15": loads[2]
+    }
+
+    if csv:
+        return to_csv(stat)
+    return stat
+
+
+def get_ram_usage(csv=False):
+    """ get ram usage from psutil """
+    stat = {
+        "ram_usage_percentage":
+                psutil.virtual_memory().percent
+    }
+
+    if csv:
+        return to_csv(stat)
+    return stat
 
