@@ -4,7 +4,7 @@ import psutil
 from iriscastipmi.utils import check_ipmi_conn, ipmi_query_power, to_csv
 
 
-def get_iriscast_stats(poll_period_seconds=300, csv=False):
+def get_iriscast_stats(poll_period_seconds=300, csv=False, include_header=False):
     """ get stats for iriscast """
     stats = {}
 
@@ -26,7 +26,8 @@ def get_iriscast_stats(poll_period_seconds=300, csv=False):
     stats.update(get_ram_usage())
 
     if csv:
-        return to_csv(stats)
+        return to_csv(stats, include_header)
+
     return stats
 
 
