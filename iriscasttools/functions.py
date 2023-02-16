@@ -1,7 +1,7 @@
 import re
 import os
 import psutil
-from iriscastipmi.utils import check_ipmi_conn, ipmi_query_power, to_csv
+from iriscasttools.utils import check_ipmi_conn, ipmi_query_power, to_csv
 
 
 def get_iriscast_stats(poll_period_seconds=300, csv=False, include_header=False):
