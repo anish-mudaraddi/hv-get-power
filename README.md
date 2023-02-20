@@ -1,6 +1,6 @@
-# hv-get-power
+# IRISCAST Tools
 
-A python package to allow querying IPMITool for information. Currently only allowing collection of power data.
+A python package which contains tools for collecting energy usage and CPU usage information - by querying IPMITool and others. 
 
 # Installation
 
@@ -12,6 +12,7 @@ To install the Python package, clone the repository and run:
 # Usage
 
 ```
-from ipmitool.functions import *
-res = get_current_power(csv=True) # produces a csv string
+from iriscasttool.functions import *
+res = get_iriscast_stats(csv=True, poll_period_seconds=60, include_header=False) # produces a csv string
+
 ```
