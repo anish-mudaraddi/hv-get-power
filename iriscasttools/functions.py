@@ -1,6 +1,6 @@
 import re
 import os
-import psutil
+import subprocess
 from iriscasttools.utils import check_ipmi_conn, ipmi_query_power, to_csv
 
 
@@ -15,9 +15,6 @@ def get_iriscast_stats(poll_period_seconds=300, csv=False, include_header=False)
             int(power_stats['current_power']) * (poll_period_seconds/3600), 3
         )
         stats.update(power_stats)
-
-    # get cpu info
-    stats.update(get_cpu_usage())
 
     # get os load info
     stats.update(get_os_load())
@@ -77,17 +74,6 @@ def get_all_power_stats(csv=False):
     return power_stats
 
 
-def get_cpu_usage(csv=False):
-    """ get os cpu usage from psutils """
-    stat = {
-        "cpu_usage_percentage": psutil.cpu_percent()
-    }
-
-    if csv:
-        return to_csv(stat)
-    return stat
-
-
 def get_os_load(csv=False):
     """ get os load average from os """
     loads = os.getloadavg()
@@ -104,12 +90,15 @@ def get_os_load(csv=False):
 
 def get_ram_usage(csv=False):
     """ get ram usage from psutil """
-    stat = {
-        "ram_usage_percentage":
-                psutil.virtual_memory().percent
-    }
+    max_ram = int(run_cmd(
+        "free -k | sed -n '2p' | awk '{print $2}'",
+    ))
+
+    used_ram = int(run_cmd(
+        "free -k | sed -n '2p' | awk '{print $3}'"
+    ))
 
     if csv:
-        return to_csv(stat)
+        return to_csv(round((used_ram/max_ram)*100, 3))
     return stat
 
