@@ -6,13 +6,15 @@ import os
 def run_cmd(cmd_args, max_retries=3):
     """Run command with given arguments and return output"""
     for retry in range(max_retries):
-        res = subprocess.run(cmd_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        if res.returncode:
+        res_list = subprocess.Popen(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+        if res_list[1]:
             # We encountered a failure - likely due to the node being busy
             # Wait for longer time after each consecutive fail
             time.sleep(retry + 1)
             continue
-        return res
+        else:
+            return res_list[0]
+    return None
 
 
 def check_ipmi_conn():
@@ -24,17 +26,15 @@ def check_ipmi_conn():
         return False
 
     # check if ipmitool exists
-    res = run_cmd(["/usr/bin/ipmitool", "sel", "info"])
-    if res.returncode:
-        print("Failed to run ipmitool sel! (%s). Exiting" % res.stderr)
-        return False
-    return True
-
+    res = run_cmd("/usr/bin/ipmitool sel info")
+    if res:
+        return True
+    return False
 
 def ipmi_query_power():
     # Get Power Info
-    res = run_cmd(["/usr/sbin/ipmi-dcmi", "--get-system-power-statistics"])
-    if res.returncode:
+    res = run_cmd("/usr/sbin/ipmi-dcmi --get-system-power-statistics")
+    if not res:
         print("Failed to run ipmi-dcmi tool! (%s). Exiting" % res.stderr)
         return None
     return res
