@@ -12,7 +12,7 @@ To install the Python package, clone the repository and run:
 # Usage
 
 ```
-from iriscasttool.functions import *
+from iriscasttools.functions import *
 res = get_iriscast_stats(csv=True, poll_period_seconds=60, include_header=False) # produces a csv string
 
 ```
